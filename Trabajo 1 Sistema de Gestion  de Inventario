@@ -1,0 +1,156 @@
+#include <stdio.h>
+
+int main() {
+    char nom[50] = "";
+    int id = 0, stock = 0, venta = 0, vendido = 0, masstock = 0, accion = 0;
+    float precio = 0.0, ganancia = 0.0, descuento = 0.0, precioFinal = 0.0;
+    int productoRegistrado = 0; // Bandera: indica si ya se registró un producto
+
+    printf("=== Sistema de Inventario ===\n");
+
+    printf("\n--- Menu ---");
+    printf("\n1. Registrar datos del producto");
+    printf("\n2. Vender producto");
+    printf("\n3. Reabastecer producto");
+    printf("\n4. Informacion del producto");
+    printf("\n5. Revisar ganancias");
+    printf("\n6. Salir");
+    printf("\nIngrese su accion: ");
+    scanf("%d", &accion);
+
+    while (accion != 6) {
+
+        if (accion < 1 || accion > 6) {
+            printf("\nOpcion invalida. Ingrese un numero entre 1 y 6.\n");
+        }
+
+        else if (accion != 1 && !productoRegistrado) {
+            printf("\nPrimero debe registrar un producto (opcion 1).\n");
+        }
+        else {
+            switch (accion) {
+
+                case 1:
+                    getchar(); 
+
+                    do {
+                        printf("\n\tIngrese ID del producto: ");
+                        scanf("%d", &id);
+                        if (id <= 0)
+                            printf("\tError: el ID debe ser mayor que 0.\n");
+                    } while (id <= 0);
+
+                    getchar(); 
+                    printf("\tIngrese nombre del producto: ");
+                    fgets(nom, 50, stdin);
+
+                    for (int i = 0; nom[i] != '\0'; i++) {
+                        if (nom[i] == '\n') {
+                            nom[i] = '\0';
+                            break;
+                        }
+                    }
+
+                    do {
+                        printf("\tIngrese stock inicial: ");
+                        scanf("%d", &stock);
+                        if (stock < 0)
+                            printf("\tError: el stock no puede ser negativo.\n");
+                    } while (stock < 0);
+
+                    do {
+                        printf("\tIngrese precio: ");
+                        scanf("%f", &precio);
+                        if (precio <= 0)
+                            printf("\tError: el precio debe ser mayor que 0.\n");
+                    } while (precio <= 0);
+
+                    vendido  = 0;
+                    ganancia = 0.0;
+
+                    productoRegistrado = 1;
+                    printf("\n\tProducto '%s' registrado correctamente.\n", nom);
+                    break;
+
+                case 2:
+                    if (stock == 0) {
+                        printf("\n\tNo hay stock disponible. Reabastezca el producto.\n");
+                        break;
+                    }
+
+                    do {
+                        printf("\n\tIngrese cantidad a vender: ");
+                        scanf("%d", &venta);
+                        if (venta <= 0)
+                            printf("\tError: la cantidad debe ser mayor que 0.\n");
+                        else if (venta > stock)
+                            printf("\tError: solo hay %d unidades en stock.\n", stock);
+                    } while (venta <= 0 || venta > stock);
+
+                    do {
+                        printf("\tIngrese descuento (%%) a aplicar (0 si no hay): ");
+                        scanf("%f", &descuento);
+                        if (descuento < 0 || descuento > 100)
+                            printf("\tError: el descuento debe estar entre 0 y 100.\n");
+                    } while (descuento < 0 || descuento > 100);
+
+                    precioFinal = precio * (1.0 - descuento / 100.0);
+
+                    stock    -= venta;                  
+                    vendido  += venta;                  
+                    ganancia += venta * precioFinal;    
+                    printf("\n\t--- Resumen de Venta ---\n");
+                    printf("\tUnidades vendidas:\t%d\n", venta);
+                    printf("\tPrecio unitario:  \t$%.2f\n", precio);
+                    printf("\tDescuento:        \t%.1f%%\n", descuento);
+                    printf("\tPrecio con descuento:\t$%.2f\n", precioFinal);
+                    printf("\tTotal venta:      \t$%.2f\n", venta * precioFinal);
+                    printf("\tStock restante:   \t%d\n", stock);
+                    break;
+
+                case 3:
+
+                    do {
+                        printf("\n\tIngrese cantidad a reabastecer: ");
+                        scanf("%d", &masstock);
+                        if (masstock <= 0)
+                            printf("\tError: la cantidad debe ser mayor que 0.\n");
+                    } while (masstock <= 0);
+
+                    stock += masstock;
+                    printf("\n\tStock reabastecido.\n");
+                    printf("\tStock actual:\t%d\n", stock);
+                    break;
+
+                case 4:
+                    printf("\n\t--- Informacion del Producto ---\n");
+                    printf("\tID       :\t%d\n",    id);
+                    printf("\tNombre   :\t%s\n",    nom);
+                    printf("\tStock    :\t%d\n",    stock);
+                    printf("\tPrecio   :\t$%.2f\n", precio);
+                    printf("\tVendidos :\t%d\n",    vendido);
+                    printf("\tGanancias:\t$%.2f\n", ganancia);
+                    break;
+
+                case 5:
+                    printf("\n\t--- Ganancias ---\n");
+                    printf("\tUnidades vendidas :\t%d\n",    vendido);
+                    printf("\tGanancia acumulada:\t$%.2f\n", ganancia);
+                    break;
+            }
+        }
+
+        printf("\n--- Menu ---");
+        printf("\n1. Registrar datos del producto");
+        printf("\n2. Vender producto");
+        printf("\n3. Reabastecer producto");
+        printf("\n4. Informacion del producto");
+        printf("\n5. Revisar ganancias");
+        printf("\n6. Salir");
+        printf("\nIngrese su accion: ");
+        scanf("%d", &accion);
+    }
+
+    printf("\nAdios. Gracias por usar el sistema.\n");
+    return 0;
+}
